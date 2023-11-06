@@ -1,13 +1,13 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Next.js Starter Blog',
+  title: 'm0z.dev blog',
   author: 'moz',
   headerTitle: 'm0z.dev',
-  description: 'A blog created with Next.js and Tailwind.css',
+  description: 'm0z.dev blog',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://www.m0z.dev',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  siteRepo: 'https://github.com/mozlum/m0z-dev',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
