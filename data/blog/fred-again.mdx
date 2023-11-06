@@ -3,35 +3,35 @@ title: Fred Again, Melbourne
 date: '2023-11-06'
 tags: ['tickets', 'botting']
 draft: false
-summary: How I managed to secure every single ticket to one of the biggest DJ's in the world 
+summary: How I managed to secure every single ticket to one of the biggest DJs in the world 
 ---
 
 Please note botting tickets is a very grey area and can become a legal issue, the following all happened within the laws of the Victorian Government and all the code provided below is only for educational purposes, I highly advise against using any of it.
 
 ## Who is Fred Again?
 
-Fred again is one of the hottest DJ's and producers at the moment, with over 2 million followers on instagram 14 million monthly listeners on spotify. Early this year Fred again was touring Australia with the Laneway Festival. Alongside his performances at Laneway he also held various sideshows at multiple locations. On Feburary 3rd he announced that he would be doing a sideshow and all his fans where going nuts for tickets. Only around 30 minutes before the actual event I was notified that the tickets would be super limited and there would be a massive amount of people trying to get them and thus would have quite high resell value (please keep in mind that reselling these tickets is completely legal as the Victorian laws only apply to events that are deemed major events by the government).
+Fred Again is one of the hottest DJs and producers at the moment, with over 2 million followers on Instagram and 14 million monthly listeners on Spotify. Early this year Fred again was touring Australia with the Laneway Festival. Alongside his performances at Laneway, he also held various sideshows at multiple locations. On February 3rd he announced that he would be doing a sideshow and all his fans were going nuts for tickets. Only around 30 minutes before the actual event I was notified that the tickets would be super limited and there would be a massive amount of people trying to get them and thus would have quite high resell value (please keep in mind that reselling these tickets is completely legal as the Victorian laws only apply to events that are deemed major events by the government).
 
 ## What I did
 
-At the time I was currently in Melbourne and had a flight in about 2 hours, with not much to do I had a look at the event and thought about maybe grabbing a ticket or two. With my background in sneaker bots it was only second nature to have a look at how the site worked. After only a few minutes of digging around I noticed a few major issues. First there was absolutely 0 bot protection or mitigation, and there was an 8 minute cart hold when you went to checkout. In about 5 minutes I created a test script to create cart holds for tickets on the site and doing a bit more looking I was able to find everything I needed to pre run the tickets. Five seconds before the drop I started my scripts, I hit a lot. I knew I hit a lot but I didn't realise that I had actually secured every single ticket in an 8 minute cart hold. I spent the next 30 minutes recarting and distributing all the carts to people from the discord until there was none left.
+At the time I was currently in Melbourne and had a flight in about 2 hours, with not much to do I had a look at the event and thought about maybe grabbing a ticket or two. With my background in sneaker bots, it was only second nature to have a look at how the site worked. After only a few minutes of digging around, I noticed a few major issues. First, there was absolutely 0 bot protection or mitigation, and there was an 8-minute cart hold when you went to checkout. In about 5 minutes I created a test script to create cart holds for tickets on the site and by doing a bit more looking I was able to find everything I needed to pre-run the tickets. Five seconds before the drop I started my scripts, and I hit a lot. I knew I hit a lot but I didn't realise that I had actually secured every single ticket in an 8-minute cart hold. I spent the next 30 minutes recarting and distributing all the carts to people from the discord until there was none left.
 
 I didn't think much of it at the time but when I got off my flight I got a message from a friend saying that Channel 7 News had done a story about Fred Again, You can view that story uploaded onto YouTube [here](https://www.youtube.com/watch?v=Gv4TLOs_q20).
 
 ## How I did it
 
-The script that I used on the day was only a 95 line python script, it was super simple.
+The script that I used on the day was only a 95-line Python script, it was super simple.
 
-Most major websites that sell limited goods, tickets etc. have some form of bot mitigation or protection whether its as simple as a captcha or an antibot vendor like F5 Security it is unusual to find a site that has no protection at all.
+Most major websites that sell limited goods, tickets etc. have some form of bot mitigation or protection whether it's as simple as a captcha or an antibot vendor like F5 Security it is unusual to find a site that has no protection at all.
 
-In order to see how the backend api is communicating with the front end we can use the chrome developer tools to look at the network reqeusts. Since I couldn't checkout the tickets yet I had to go to a random event hosted on the website and try cart a ticket to see how it worked.
+In order to see how the backend API is communicating with the front end we can use the Chrome developer tools to look at the network requests. Since I couldn't checkout the tickets yet I had to go to a random event hosted on the website and try to cart a ticket to see how it worked.
 
 ![Network requests on chrome devtools](/static/images/devtools1.png)
 
 
 After carting I noticed the checkout timer meaning the the carts would be held, even better for me. I then had a look at the requests and saw it was just a single request and after observing the headers, payload and cookies I was even more surprised to notice there wasn't any bot mitigation in place.
 
-Lets take a better look at the payload:
+Let's take a better look at the payload:
 
 ```json
 {
@@ -49,7 +49,7 @@ Lets take a better look at the payload:
 }
 ```
 
-The `eventId` and `eventDateId` are quite self explanatory, I just got them from the actual event page and kept them static, the `requestedPackageTickets`, `clientDonation` and `lastOrderId` are also simle and so I left them the same. The only thing I was able to do on the actual event page was change the quantity which had a max of 2, there wasn't any quantity field but the requestedTickets field took an array of objects for each ticket so I just added in one more but I wasn't sure if it would work and I didn't have enough time to test.
+The `eventId` and `eventDateId` are quite self-explanatory, I just got them from the actual event page and kept them static, the `requestedPackageTickets`, `clientDonation` and `lastOrderId` are also similar so I left them the same. The only thing I was able to do on the actual event page was change the quantity which had a max of 2, there wasn't any quantity field but the requestedTickets field took an array of objects for each ticket so I just added in one more but I wasn't sure if it would work and I didn't have enough time to test.
 
 ```python
 tickets = random.choice([
@@ -72,27 +72,27 @@ tickets = random.choice([
 ])
 ```
 
-Even though 50% isn't as good as 100% its much better than 0% so I decided to just have 50% of all threads attempt with what I thought would work for two tickets and the others with what I knew would work for one.
+Even though 50% isn't as good as 100% it's much better than 0% so I decided to just have 50% of all threads attempt with what I thought would work for two tickets and the others with what I knew would work for one.
 
-The next thing I had to look at was the response, how was the cart set? After checking it was as simple as a checkout url using the `_id` from the response JSON.
+The next thing I had to look at was the response, how was the cart set? After checking it was as simple as a checkout URL using the `_id` from the response JSON.
 
 ```python
 checkoutID = response.json()['order']['_id']
 link = f"https://events.humanitix.com/fred-again-friday/details/{checkoutID}"        
 ```
 
-Lastly I grabbed the requests headers which where just like any other normal request except for two extra static headers.
+Lastly, I grabbed the request headers which were just like any other normal request except for two extra static headers.
 
 ```python
 'x-event-level-location': 'AU',
 'x-user-level-location': 'AU',
 ```
 
-Using the python `requests` package I was able to send requests to the website backend to easily secure carts for the event.
+Using the Python `requests` package I was able to send requests to the website backend to easily secure carts for the event.
 
 ```python
 # a few headers removed for readability however the full script is
-# available on the github below
+# available on the GitHub below
 headers = {
     'authority': 'events.humanitix.com',
     'accept': 'application/json, text/plain, */*',
@@ -156,6 +156,6 @@ checkoutID = response.json()['order']['_id']
 link = f"https://events.humanitix.com/fred-again-friday/details/{checkoutID}"
 ```
 
-This is a small exert of the script with some minor changes, the full script can be found [here](https://github.com/mozlum/fred-again-script). To add in multithreading I made use of the python `threading` packge to spawn multiple threads running the same function in a loop. I also added http proxy support to avoid being blocked whilst sending a large amount of requests.
+This is a small excerpt of the script with some minor changes, the full script can be found [here](https://github.com/mozlum/fred-again-script). To add in multithreading I made use of the Python `threading` package to spawn multiple threads running the same function in a loop. I also added HTTP proxy support to avoid being blocked whilst sending a large number of requests.
 
-Even though this is a pretty messy and simple script it had a huge impact and got as far as the local news, if you got this far thanks for reading will hopefully a few more blog posts out soon :)
+Even though this is a pretty messy and simple script it had a huge impact and got as far as the local news, if you got this far thanks for reading will hopefully have a few more blog posts out soon :)
